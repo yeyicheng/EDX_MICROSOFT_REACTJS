@@ -87,7 +87,7 @@ class FormSection extends React.Component {
           </div>
 
           <div className="form-group">
-            <label for="lastName" className="col-sm-3 control-label">Select Activity</label>
+            <label for="lastName" className="col-sm-3 control-label">Check all that apply</label>
             <div className="col-sm-3">
               { restrictions.map((item, index) => 
                                  { return <CheckBox name={ item.name } label={ item.label } value={ item.value } handleCheckbox={this.handleCheckbox} isChecked={ this.state["restrictions" + item.label + "Checked" ] } />
