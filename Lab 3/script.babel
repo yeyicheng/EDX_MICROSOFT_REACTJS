@@ -1,0 +1,198 @@
+const activities = ["Science Lab", "Swimming", "Cooking", "Painting"];
+const restrictions = [ { 
+  name: "Dietary Restrictions", 
+  value: "a",
+  label: "A"
+},{
+  name: "Physical Disabilities",
+  value: "b",
+  label: "B"
+},{
+  name: "Medical Needs",
+  value: "c",
+  label: "C"
+} ]
+                 
+class CheckBox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: ""
+    }
+  }
+  
+  render(){
+    return (<div>
+        <input type="checkbox" name="restrictions" onChange={ (event) => { this.props.handleCheckbox(event, this.props.name, this.props.label, this.props.value )} } checked={ this.props.isChecked } />{ this.props.value + ")" + this.props.name }
+      </div>)
+  }
+}
+
+class FormSection extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstName: "",
+      lastName: "",
+      selectedActivity: 0,
+      restrictionsA: "",
+      restrictionsB: "",
+      restrictionsC: "",
+      restrictionsAChecked: false,
+      restrictionsBChecked: false,
+      restrictionsCChecked: false
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleCheckbox = this.handleCheckbox.bind(this);
+  }
+ 
+  handleChange(event){
+    this.setState({
+      [event.target.name]: event.target.value
+    })
+  }
+  
+  handleCheckbox(event, name, label, value){
+    this.setState({
+      ["restrictions" + label]: event.target.checked? value: "",
+      ["restrictions" + label + "Checked"]: event.target.checked
+    })
+  }
+  
+  render(){
+    return (
+      <div id="formSection">
+        <form className="form-horizontal" name="commentForm">
+          <div className="form-group">
+            <label for="firstName" className="col-sm-3 control-label">First Name</label>
+            <div className="col-sm-3">
+              <input type="text" className="form-control" id="firstName" value={ this.state.firstName } name="firstName" onChange={ this.handleChange } />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label for="lastName" className="col-sm-3 control-label">Last Name</label>
+            <div className="col-sm-3">
+              <input type="text" className="form-control" id="lastName" value={ this.state.lastName } name="lastName" onChange={ this.handleChange }/>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label for="lastName" className="col-sm-3 control-label">Select Activity</label>
+            <div className="col-sm-3">
+              <select value={ this.state.selectedActivity } name="selectedActivity" onChange={ this.handleChange }>
+                { activities.map((item, index) => { return (<option value={ index }>{ item }</option>)}) }
+              </select>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label for="lastName" className="col-sm-3 control-label">Select Activity</label>
+            <div className="col-sm-3">
+              { restrictions.map((item, index) => 
+                                 { return <CheckBox name={ item.name } label={ item.label } value={ item.value } handleCheckbox={this.handleCheckbox} isChecked={ this.state["restrictions" + item.label + "Checked" ] } />
+                                 })}
+            </div>
+          </div>
+
+          <div Name="form-group">
+            <div className="col-sm-3">
+              <button type="button" className="form-control btn btn-primary" onClick={ () => this.props.handleSubmit(this.state, this) }>Submit Comment</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    )
+  }
+}
+  
+class TableSection extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: this.props.data
+    }
+  }
+ 
+  handleRemove(index) {
+    var _data = this.state.data;
+    _data.splice(index, 1);
+    this.setState({
+      data: _data
+    })
+  }
+  
+  render(){ return(
+    <table width="100%">
+      <tr align="center" className="text-center">
+        <th width="20%" className="text-center">Remove</th>
+        <th width="20%" className="text-center">First Name</th>
+        <th width="20%" className="text-center">Last Name</th>
+        <th width="20%" className="text-center">Activity</th>
+        <th width="20%" className="text-center">Restrictions</th>
+      </tr>
+      {
+        this.state.data.map((item, index) => {
+          return (
+            <tr align="center"className="text-center">
+              <td className="text-center"><button onClick={ ()=> this.handleRemove(index) }>X</button></td>
+              <td className="text-center">{ item.FirstName }</td>
+              <td className="text-center">{ item.LastName }</td>
+              <td className="text-center">{ item.Activity }</td>
+              <td className="text-center">{ item.Restrictions }</td>
+            </tr>
+          )
+        })
+      }
+    </table>
+  )
+  }
+}
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: []
+    }
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(state, that) {
+    var record = {
+      FirstName: state.firstName,
+      LastName: state.lastName,
+      Activity: activities[state.selectedActivity],
+      Restrictions: (state.restrictionsA + state.restrictionsB + state.restrictionsC) || ""
+    }
+    var _data = this.state.data;
+    _data.push(record)
+    this.setState({
+      data: _data 
+    }, function() {
+      that.setState({
+        firstName: "",
+        lastName: "",
+        selectedActivity: 0,
+        restrictionsA: "",
+        restrictionsB: "",
+        restrictionsC: "",
+        restrictionsAChecked: false,
+        restrictionsBChecked: false,
+        restrictionsCChecked: false
+      });
+    })    
+  }
+  render(){
+    return (
+      <div>
+        <FormSection handleSubmit={ this.handleSubmit } />
+        <TableSection data={ this.state.data }/> 
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById("root")
+)
