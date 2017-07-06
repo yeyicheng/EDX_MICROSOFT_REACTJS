@@ -1,0 +1,25 @@
+#root {
+  height: 175px;
+}
+h1 {
+  margin: 0;
+  color: red;
+}
+#stats {
+  padding: 45px 0;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+button {
+  width: 150px;
+}
+#questions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
